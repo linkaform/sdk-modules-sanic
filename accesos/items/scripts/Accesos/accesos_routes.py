@@ -28,14 +28,6 @@ async def get_pases_tres(request: Request):
 # (equivalente a lo ya agregado en addons/accesos/routes.py -- vive aquí
 # también para poder probarlo en caliente antes del build/deploy real)
 
-@accesos_bp.post("/get_catalog_areas_formatted")
-async def post_get_catalog_areas_formatted(request: Request):
-    payload = _ocr_payload(request)
-    response = service.get_catalog_areas_formatted(
-        ubicacion=payload.get("ubicacion", ""),
-        dynamic_filters=payload.get("dynamic_filters"),
-    )
-    return json({"data": response}, status=200)
 
 @accesos_bp.get("/filters_areas")
 async def get_filters_areas(request: Request):

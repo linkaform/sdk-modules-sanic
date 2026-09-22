@@ -1010,39 +1010,6 @@ class Accesos( Accesos):
         ]
         return self.format_cr(self.cr.aggregate(query))
 
-    def get_catalog_areas_formatted(self, ubicacion="", dynamic_filters=None):
-        if ubicacion:
-            options = {
-                'startkey': [ubicacion],
-                'endkey': [f"{ubicacion}\n", {}],
-                'group_level': 2
-            }
-            catalog_id = self.AREAS_DE_LAS_UBICACIONES_CAT_ID
-            form_id = self.CONFIGURACION_RECORRIDOS_FORM
-            areas = self.catalogo_view(catalog_id, form_id, options)
-            response = self.get_areas_details(areas, dynamic_filters=dynamic_filters)
-            areas_formateadas = []
-            for r in response:
-                areas_formateadas.append({
-                    "folio": r.get("folio", ""),
-                    "record_id": r.get("_id", ""),
-                    "rondin_area": r.get("area", ""),
-                    "geolocalizacion_area_ubicacion": [
-                        {
-                            "latitude": r.get("latitude", 0.0),
-                            "longitude": r.get("longitude", 0.0)
-                        }
-                    ],
-                    "area_tag_id": [r.get("tag_id", "")],
-                    "foto_area": r.get("image", []),
-                    "tipo_de_area": r.get("tipo_de_area", ""),
-                    "area_state": r.get("area_state", ""),
-                    "area_status": r.get("area_status", ""),
-                })
-            return areas_formateadas
-        else:
-            raise Exception("Ubicacion is required.")
-
     def get_area_by_id(self, record_id):
         print('aver entra...')
         if not record_id:
