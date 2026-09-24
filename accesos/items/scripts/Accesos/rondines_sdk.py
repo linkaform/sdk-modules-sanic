@@ -141,8 +141,13 @@ def get_bitacora_by_id(params):
 
 def get_catalog_areas_formatted(params):
     data = params.get("data", {})
+    print("data",data)
     return dispatch("get_catalog_areas_formatted", params={
-        'ubicacion': data.get('ubicacion', ''),
+        'locations': data.get('locations', []),
+        'limit': data.get('limit', 25),
+        'skip': data.get('offset', 0),
+        'search': data.get('search', ''),
+        'search_fields': data.get('search_fields',[]),
         'dynamic_filters': data.get('dynamic_filters', []),
     }, method='post', **params)
 

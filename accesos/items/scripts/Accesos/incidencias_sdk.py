@@ -13,7 +13,7 @@ def nueva_incidencia(params):
 def get_incidences(params):
     data = params.get("data", {})
     return dispatch("get_incidences", params={
-        'location': data.get('location', ''),
+        'locations': data.get('locations', []),
         'area': data.get('area', ''),
         'prioridades': data.get('prioridades', []),
         'dateFrom': data.get('dateFrom', ''),
