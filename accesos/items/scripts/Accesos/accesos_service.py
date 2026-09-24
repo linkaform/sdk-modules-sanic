@@ -996,6 +996,16 @@ class Accesos( Accesos):
                 "type": "multiple",
                 "options": [{"label": i.capitalize(), "value": i} for i in disponibilidad]
             },
+            {
+                "defaultDisplayOpen": False,
+                "key": "tipo_identificador",
+                "label": "Tipo",
+                "type": "multiple",
+                "options": [
+                    {"label": "Tag", "value": "tag"},
+                    {"label": "QR", "value": "qr"},
+                ]
+            },
         ]
 
     def get_areas_details(self, areas_list, dynamic_filters=None):
@@ -1012,6 +1022,16 @@ class Accesos( Accesos):
                     match_query[f"answers.{self.Location.f['area_state']}"] = {"$in": item.get('value')}
                 elif item.get('key') == 'disponibilidad':
                     match_query[f"answers.{self.Location.f['area_status']}"] = {"$in": item.get('value')}
+                elif item.get('key') == 'tipo_identificador':
+                    # Tag = el área tiene area_tag_id capturado; QR = no lo tiene
+                    # (toda área se puede checar por el QR de su record_id).
+                    # Con ambas opciones o ninguna no se filtra.
+                    tipos_identificador = set(item.get('value') or [])
+                    tag_field = f"answers.{self.f['area_tag_id']}"
+                    if tipos_identificador == {'tag'}:
+                        match_query[tag_field] = {"$exists": True, "$nin": [None, "", []]}
+                    elif tipos_identificador == {'qr'}:
+                        match_query[tag_field] = {"$in": [None, "", []]}
                 else:
                     continue
         query = [
@@ -1019,6 +1039,7 @@ class Accesos( Accesos):
             {"$project": {
                 "folio": 1,
                 "area": f"$answers.{self.Location.f['area']}",
+                "ubicacion": f"$answers.{self.Location.UBICACIONES_CAT_OBJ_ID}.{self.mf['ubicacion']}",
                 "geolocation": f"$answers.{self.f['geolocalizacion_area_ubicacion']}",
                 "image": f"$answers.{self.f['foto_area']}",
                 "tag_id": f"$answers.{self.f['area_tag_id']}",
