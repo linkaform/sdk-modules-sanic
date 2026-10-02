@@ -12,6 +12,7 @@ import pytz, simplejson
 from sanic import Blueprint
 from sanic.request import Request
 from sanic.response import json
+from sanic.exceptions import Unauthorized
 
 
 
@@ -148,8 +149,8 @@ class Accesos( Accesos):
     #     # print('query><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<', simplejson.dumps(query, indent=2))
     #     return self.format_cr_result(self.cr.aggregate(query),  get_one=True)
 
+
     def get_cantidades_de_pases(self, x_empresa=False):
-        print('entra a get_cantidades_de_pases')
         match_query = {
             "deleted_at":{"$exists":False},
             "form_id": self.PASE_ENTRADA,
@@ -201,11 +202,9 @@ class Accesos( Accesos):
         ]
 
         records = self.format_cr(self.cr.aggregate(query))
-        print('/////////records', records)
         return  records
     
     def get_cantidades_de_pases_x_persona(self, contratista=None):
-        print('entra a get_cantidades_de_pases_x_persona')
         match_query = {
             "deleted_at":{"$exists":False},
             "form_id": self.PASE_ENTRADA,
@@ -245,7 +244,6 @@ class Accesos( Accesos):
         ]
 
         records = self.format_cr(self.cr.aggregate(query))
-        print('/////////records', records)
         return  records
     
     def get_catalogo_paquetes(self):
@@ -410,7 +408,6 @@ class Accesos( Accesos):
             )
            
         records = self.format_cr(self.cr.aggregate(query))
-        # print( simplejson.dumps(records, indent=4))
         for r in records:
             pase = r.pop('pase')
             r.pop('pase_id')
@@ -563,7 +560,6 @@ class Accesos( Accesos):
         #     r['vehiculos'] = self.format_vehiculos(r.get('vehiculos',[]))
         #     r['equipos'] = self.format_equipos(r.get('equipos',[]))
         #     r['visita_a'] = self.format_visita(r.get('visita_a',[]))
-        print("rondines", simplejson.dumps( records,indent=4))
         return  records
 
     # def get_page_stats(self, booth_area, location, page=''):
@@ -886,17 +882,21 @@ class Accesos( Accesos):
         #- Expirados son lo que esta en status programados y que tienen mas de 24 de programdos
         # - en progreso son lo que estan con status progreso y tienen mas de 1 hr de su ultimo check.
         answers = {}
+        user_id =self.user.get("user_id")
+        if not user_id:
+            raise Unauthorized("No se pudo determinar el usuario para cerrar los rondines.")
         tiz = pytz.timezone(timezone)
         ahora_cierre = datetime.now(tiz)
-
         rondines_expirados = []
         rondines_en_proceso_vencidos = []
-
+        users_cache = {}
         for rondin in list_of_rondines:
             estatus = rondin.get('estatus_del_recorrido')
             fecha_programacion_str = rondin.get('fecha_programacion')
             user_id = self.unlist(rondin.get('rondinero_id', 0))
-            user_data = self.lkf_api.get_user_by_id(user_id)
+            if user_id not in users_cache:
+                users_cache[user_id] = self.lkf_api.get_user_by_id(user_id)
+            user_data = users_cache[user_id]
             user_timezone = user_data.get('timezone', 'America/Mexico_City')
             tz = pytz.timezone(user_timezone)
             ahora = datetime.now(tz)
@@ -914,6 +914,10 @@ class Accesos( Accesos):
                         fecha = tz.localize(datetime.strptime(fecha_str, '%Y-%m-%d %H:%M:%S'))
                         if not ultima_fecha or fecha > ultima_fecha:
                             ultima_fecha = fecha
+                if not ultima_fecha:
+                    fecha_inicio_str = rondin.get('fecha_inicio_rondin')
+                    if fecha_inicio_str:
+                        ultima_fecha = tz.localize(datetime.strptime(fecha_inicio_str, '%Y-%m-%d %H:%M:%S'))
                 if ultima_fecha and ahora > ultima_fecha + timedelta(minutes=15):
                     rondines_en_proceso_vencidos.append(rondin)
 
@@ -922,10 +926,25 @@ class Accesos( Accesos):
         for rondin in rondines_expirados:
             rondines_ids.append(rondin.get('_id'))
 
+        db_name = f'clave_{user_id}'
+        cr_db = self.get_couch_user_db(db_name)
+
+        records = list(cr_db.find({
+            "selector": {"_id": {"$in": rondines_ids}}
+        }))
+
+        records_recived = list(cr_db.find({
+            "selector": {"type": "rondin", "status": "received"}
+        }))
+        records += records_recived
+        to_delete = [{"_id": r["_id"], "_rev": r["_rev"], "_deleted": True} for r in records]
+        batch_size = 300
+        for i in range(0, len(to_delete), batch_size):
+            cr_db.update(to_delete[i:i + batch_size])
+
         answers[self.f['estatus_del_recorrido']] = 'cerrado'
         answers[self.f['fecha_fin_rondin']] = ahora_cierre.strftime('%Y-%m-%d %H:%M:%S')
 
-        # print(stop)
         if answers:
             res = self.lkf_api.patch_multi_record(answers=answers, form_id=self.BITACORA_RONDINES, record_id=rondines_ids)
             if res.get('status_code') == 201 or res.get('status_code') == 202:
@@ -1011,7 +1030,6 @@ class Accesos( Accesos):
         return self.format_cr(self.cr.aggregate(query))
 
     def get_area_by_id(self, record_id):
-        print('aver entra...')
         if not record_id:
             raise Exception("Record ID is required to get area details.")
 
