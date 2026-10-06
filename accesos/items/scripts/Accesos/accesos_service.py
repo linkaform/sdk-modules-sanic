@@ -1050,6 +1050,7 @@ class Accesos( Accesos):
         ]
         return self.format_cr(self.cr.aggregate(query))
 
+<<<<<<< Updated upstream
     def get_area_by_id(self, record_id):
         if not record_id:
             raise Exception("Record ID is required to get area details.")
@@ -1093,6 +1094,8 @@ class Accesos( Accesos):
             "area_status": r.get("area_status", ""),
         }
 
+=======
+>>>>>>> Stashed changes
     def update_area_estado(self, record_id, estado):
         answers = {self.Location.f['area_state']: estado}
         return self.lkf_api.patch_multi_record(

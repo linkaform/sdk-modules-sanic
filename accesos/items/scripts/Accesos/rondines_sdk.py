@@ -202,10 +202,14 @@ def create_area(params):
         'foto_area': data.get('foto_area', []),
         'qr_area': data.get('qr_area', ''),
         'geolocalizacion': data.get('geolocalizacion'),
+        'multiple_ubicacion': data.get('multiple_ubicacion', 'no'),
     }, method='post', **params)
 
 def filters_areas(params):
     return dispatch("filters_areas", params={}, method='get', **params)
+
+def catalog_direcciones(params):
+    return dispatch("catalog_direcciones", params={}, method='get', **params)
 
 def catalago_grupos_recorridos(params):
     return dispatch("catalago_grupos_recorridos", params={}, method='get', **params)
@@ -272,6 +276,7 @@ DISPATCHER = {
     "update_area_estado": update_area_estado,
     "update_area_disponibilidad": update_area_disponibilidad,
     "create_area": create_area,
+    "catalog_direcciones": catalog_direcciones,
     "filters_areas": filters_areas,
     "catalago_grupos_recorridos": catalago_grupos_recorridos,
     "catalogo_inspecciones": catalogo_inspecciones,
