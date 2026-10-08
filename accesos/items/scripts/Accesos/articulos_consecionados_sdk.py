@@ -27,10 +27,17 @@ def get_articles(params):
     }, method='get', **params)
 
 def update_article(params):
+    # El front de devolucion (src/lib/devolucion-concesion.ts) manda el payload
+    # plano: record_id, status, state, equipos, quien_entrega, ... Se reenvia
+    # completo; data_article_update/folio siguen funcionando para llamadas directas.
     data = params.get("data", {})
+    if data.get('data_article_update'):
+        data_article = data['data_article_update']
+    else:
+        data_article = {k: v for k, v in data.items() if k not in ('option', 'script_name')}
     return dispatch("update_article", params={
-        'data_article_update': data.get('data_article_update', {}),
-        'folio': _as_list(data.get('folio')),
+        'data_article_update': data_article,
+        'record_id': data.get('record_id') or data.get('folio'),
     }, method='post', **params)
 
 def delete_article(params):
@@ -66,4 +73,11 @@ if __name__ == "__main__":
         sys.stdout.write(simplejson.dumps(response))
     else:
         response = handler(params)
-        sys.stdout.write(simplejson.dumps(response.json()))
+        body = response.json()
+        if response.status_code >= 400:
+            # Mismo formato que un LKFException del script viejo: el mini-back
+            # lo extrae del stderr y responde success:false con error.exception.
+            exception = body if 'msg' in body else {'title': 'Error', 'msg': [body.get('error', str(body))]}
+            sys.stderr.write('Exception: ' + simplejson.dumps({'exception': exception}))
+            sys.exit(1)
+        sys.stdout.write(simplejson.dumps(body))
