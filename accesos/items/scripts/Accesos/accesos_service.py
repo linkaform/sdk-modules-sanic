@@ -1050,52 +1050,6 @@ class Accesos( Accesos):
         ]
         return self.format_cr(self.cr.aggregate(query))
 
-<<<<<<< Updated upstream
-    def get_area_by_id(self, record_id):
-        if not record_id:
-            raise Exception("Record ID is required to get area details.")
-
-        query = [
-            {"$match": {
-                "_id": ObjectId(record_id),
-                "form_id": self.Location.AREAS_DE_LAS_UBICACIONES,
-                "deleted_at": {"$exists": False},
-            }},
-            {"$project": {
-                "folio": 1,
-                "area": f"$answers.{self.Location.f['area']}",
-                "ubicacion": f"$answers.{self.Location.UBICACIONES_CAT_OBJ_ID}.{self.mf['ubicacion']}",
-                "geolocation": f"$answers.{self.f['geolocalizacion_area_ubicacion']}",
-                "image": f"$answers.{self.f['foto_area']}",
-                "tag_id": f"$answers.{self.f['area_tag_id']}",
-                "tipo_de_area": f"$answers.{self.Location.TIPO_AREA_OBJ_ID}.{self.f['tipo_de_area']}",
-                "area_state": f"$answers.{self.Location.f['area_state']}",
-                "area_status": f"$answers.{self.Location.f['area_status']}",
-            }}
-        ]
-        r = self.format_cr(self.cr.aggregate(query), get_one=True)
-        if not r:
-            return None
-        return {
-            "folio": r.get("folio", ""),
-            "record_id": r.get("_id", ""),
-            "rondin_area": r.get("area", ""),
-            "ubicacion": r.get("ubicacion", ""),
-            "geolocalizacion_area_ubicacion": [
-                {
-                    "latitude": r.get("latitude", 0.0),
-                    "longitude": r.get("longitude", 0.0)
-                }
-            ],
-            "area_tag_id": [r.get("tag_id", "")],
-            "foto_area": r.get("image", []),
-            "tipo_de_area": r.get("tipo_de_area", ""),
-            "area_state": r.get("area_state", ""),
-            "area_status": r.get("area_status", ""),
-        }
-
-=======
->>>>>>> Stashed changes
     def update_area_estado(self, record_id, estado):
         answers = {self.Location.f['area_state']: estado}
         return self.lkf_api.patch_multi_record(

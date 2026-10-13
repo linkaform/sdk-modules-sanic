@@ -60,6 +60,7 @@ def create_ubicacion(params):
         'telefono': data.get('telefono', ''),
         'email': data.get('email', ''),
         'geolocalizacion': data.get('geolocalizacion', {}),
+        'contacto': data.get('contacto', ''),
     }, method='post', **params)
 
 
@@ -69,13 +70,27 @@ def update_ubicacion(params):
         'record_id': data.get('record_id', ''),
         'nombre_actual': data.get('nombre_actual', ''),
     }
-    for key in (
-        'nombre', 'direccion', 'colonia', 'ciudad', 'estado',
-        'pais', 'codigo_postal', 'telefono', 'email', 'geolocalizacion',
-    ):
+    for key in ('nombre', 'contacto'):
         if key in data:
             payload[key] = data.get(key)
     return dispatch("update_ubicacion", module='location', params=payload, method='post', **params)
+
+
+def create_contacto(params):
+    data = params.get("data", {})
+    return dispatch("create_contacto", module='location', params={
+        'nombre': data.get('nombre', ''),
+        'tipo': data.get('tipo', 'Direccion'),
+        'direccion': data.get('direccion', ''),
+        'colonia': data.get('colonia', ''),
+        'ciudad': data.get('ciudad', ''),
+        'estado': data.get('estado', ''),
+        'pais': data.get('pais', ''),
+        'codigo_postal': data.get('codigo_postal', ''),
+        'telefono': data.get('telefono', ''),
+        'email': data.get('email', ''),
+        'geolocalizacion': data.get('geolocalizacion', {}),
+    }, method='post', **params)
 
 
 DISPATCHER = {
@@ -84,6 +99,7 @@ DISPATCHER = {
     "get_empleados_by_ubicacion": get_empleados_by_ubicacion,
     "create_ubicacion": create_ubicacion,
     "update_ubicacion": update_ubicacion,
+    "create_contacto": create_contacto,
 }
 
 if __name__ == "__main__":
