@@ -27,8 +27,15 @@ def get_andenes(api_key, params):
 def get_bitac_transportista_record(api_key, params, record_id):
     return dispatch_with_api_key("get_bitac_transportista_record", api_key, params={'record_id': record_id}, method='get', **params)
 
-def get_bitac_transportista_records(api_key, params):
-    return dispatch_with_api_key("get_bitac_transportista_records", api_key, params={}, method='get', **params)
+BITAC_RECORDS_FILTERS = (
+    "date_from", "date_to", "tipo_de_vehiculo", "proveedor_cliente", "anden_asignado",
+    "estatus", "tipo_de_operacion", "conductor", "material", "search",
+    "skip", "limit", "pagination", "facets",
+)
+
+def get_bitac_transportista_records(api_key, params, data):
+    filters = {k: data[k] for k in BITAC_RECORDS_FILTERS if data.get(k) is not None}
+    return dispatch_with_api_key("get_bitac_transportista_records", api_key, params=filters, method='post', **params)
 
 def get_horarios_data(api_key, params, dia):
     return dispatch_with_api_key("get_horarios_data", api_key, params={'dia': dia}, method='get', **params)
@@ -83,7 +90,7 @@ if __name__ == "__main__":
         "generate_submit_token_transportista": lambda: generate_submit_token_transportista(api_key, params, record_id),
         "get_andenes": lambda: get_andenes(api_key, params),
         "get_bitac_transportista_record": lambda: get_bitac_transportista_record(api_key, params, record_id),
-        "get_bitac_transportista_records": lambda: get_bitac_transportista_records(api_key, params),
+        "get_bitac_transportista_records": lambda: get_bitac_transportista_records(api_key, params, data),
         "get_horarios_data": lambda: get_horarios_data(api_key, params, data.get('dia')),
         "get_pass_transportista": lambda: get_pass_transportista(api_key, params, record_id, token),
         "get_users_data": lambda: get_users_data(api_key, params, locations),
