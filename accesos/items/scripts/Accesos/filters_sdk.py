@@ -17,6 +17,11 @@ DISPATCHER = {
     "perdidos": "filters_perdidos",
     "notas": "filters_notas",
     "areas": "filters_areas",
+    "ubicaciones": "filters_ubicaciones",
+}
+
+MODULES = {
+    "ubicaciones": "location",
 }
 
 if __name__ == "__main__":
@@ -29,5 +34,5 @@ if __name__ == "__main__":
         response = {"error": f"Option '{option}' not supported", "valid_options": list(DISPATCHER.keys())}
         sys.stdout.write(simplejson.dumps(response))
     else:
-        response = dispatch(endpoint, params={}, method='get', **params)
+        response = dispatch(endpoint, module=MODULES.get(option, 'accesos'), params={}, method='get', **params)
         sys.stdout.write(simplejson.dumps(response.json()))
