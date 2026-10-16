@@ -95,6 +95,14 @@ def ocr_equipo(params):
         'model': data.get('model', 'google/gemini-2.5-flash-lite'),
     }, method='post', **params)
 
+def ocr_acceso_transportista(params):
+    data = params.get("data", {})
+    return dispatch("ocr_acceso_transportista", params={
+        'image_source': data.get('image_source', []),
+        'extra_instructions': data.get('extra_instructions', ''),
+        'model': data.get('model', 'google/gemini-2.5-flash'),
+    }, method='post', **params)
+
 
 DISPATCHER = {
     "ocr_id": ocr_id,
@@ -107,6 +115,7 @@ DISPATCHER = {
     "ocr_vehiculo": ocr_vehiculo,
     "ocr_persona": ocr_persona,
     "ocr_equipo": ocr_equipo,
+    "ocr_acceso_transportista": ocr_acceso_transportista,
 }
 
 if __name__ == "__main__":
