@@ -10,16 +10,37 @@ def nueva_incidencia(params):
         'data_incidence': data.get('data_incidence', {}),
     }, method='post', **params)
 
-def get_incidences(params):
-    data = params.get("data", {})
-    return dispatch("get_incidences", params={
-        'locations': data.get('locations', []),
+def _filtros_incidencias(data):
+    # El front manda 'location' (texto o lista); el back espera 'locations'.
+    return {
+        'locations': data.get('locations') or data.get('location') or [],
         'area': data.get('area', ''),
-        'prioridades': data.get('prioridades', []),
         'dateFrom': data.get('dateFrom', ''),
         'dateTo': data.get('dateTo', ''),
         'filterDate': data.get('filterDate', ''),
-    }, method='get', **params)
+        'estatus': data.get('estatus') or data.get('status') or '',
+        'facets': data.get('facets', []),
+    }
+
+def get_incidences(params):
+    data = params.get("data", {})
+    return dispatch("get_incidences", params={
+        **_filtros_incidencias(data),
+        'prioridades': data.get('prioridades', []),
+        # Con limit el listado viene paginado (buscador avanzado).
+        'limit': data.get('limit'),
+        'skip': data.get('skip', 0),
+    }, method='post', **params)
+
+def get_search_fields(params):
+    return dispatch("get_search_fields_incidencias", params={}, method='get', **params)
+
+def get_search_counts(params):
+    data = params.get("data", {})
+    return dispatch("get_search_counts_incidencias", params={
+        **_filtros_incidencias(data),
+        'candidates': data.get('candidates', []),
+    }, method='post', **params)
 
 def update_incidence(params):
     data = params.get("data", {})
@@ -51,12 +72,9 @@ def catalogo_area_empleado(params):
         'location': data.get('location', ''),
     }, method='get', **params)
 
-def catalogo_incidencias(params):
-    data = params.get("data", {})
-    return dispatch("catalogo_incidencias", params={
-        'cat': data.get('cat', ''),
-        'sub_cat': data.get('sub_cat', ''),
-    }, method='get', **params)
+def catalogo_incidencias_plano(params):
+    # Todos los tipos con su categoría/subcategoría en una sola llamada.
+    return dispatch("catalogo_incidencias_plano", params={}, method='get', **params)
 
 def get_pdf(params):
     data = params.get("data", {})
@@ -68,12 +86,14 @@ def get_pdf(params):
 
 DISPATCHER = {
     "nueva_incidencia": nueva_incidencia,
+    "get_search_fields": get_search_fields,
+    "get_search_counts": get_search_counts,
     "get_incidences": get_incidences,
     "update_incidence": update_incidence,
     "update_incidence_seguimiento": update_incidence_seguimiento,
     "delete_incidence": delete_incidence,
     "catalogo_area_empleado": catalogo_area_empleado,
-    "catalogo_incidencias": catalogo_incidencias,
+    "catalogo_incidencias_plano": catalogo_incidencias_plano,
     "get_pdf": get_pdf,
 }
 

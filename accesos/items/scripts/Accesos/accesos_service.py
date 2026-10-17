@@ -996,6 +996,16 @@ class Accesos( Accesos):
                 "type": "multiple",
                 "options": [{"label": i.capitalize(), "value": i} for i in disponibilidad]
             },
+            {
+                "defaultDisplayOpen": False,
+                "key": "tipo_identificador",
+                "label": "Tipo",
+                "type": "multiple",
+                "options": [
+                    {"label": "Tag", "value": "tag"},
+                    {"label": "QR", "value": "qr"},
+                ]
+            },
         ]
 
     def get_areas_details(self, areas_list, dynamic_filters=None):
@@ -1012,33 +1022,20 @@ class Accesos( Accesos):
                     match_query[f"answers.{self.Location.f['area_state']}"] = {"$in": item.get('value')}
                 elif item.get('key') == 'disponibilidad':
                     match_query[f"answers.{self.Location.f['area_status']}"] = {"$in": item.get('value')}
+                elif item.get('key') == 'tipo_identificador':
+                    # Tag = el área tiene area_tag_id capturado; QR = no lo tiene
+                    # (toda área se puede checar por el QR de su record_id).
+                    # Con ambas opciones o ninguna no se filtra.
+                    tipos_identificador = set(item.get('value') or [])
+                    tag_field = f"answers.{self.f['area_tag_id']}"
+                    if tipos_identificador == {'tag'}:
+                        match_query[tag_field] = {"$exists": True, "$nin": [None, "", []]}
+                    elif tipos_identificador == {'qr'}:
+                        match_query[tag_field] = {"$in": [None, "", []]}
                 else:
                     continue
         query = [
             {"$match": match_query},
-            {"$project": {
-                "folio": 1,
-                "area": f"$answers.{self.Location.f['area']}",
-                "geolocation": f"$answers.{self.f['geolocalizacion_area_ubicacion']}",
-                "image": f"$answers.{self.f['foto_area']}",
-                "tag_id": f"$answers.{self.f['area_tag_id']}",
-                "tipo_de_area": f"$answers.{self.Location.TIPO_AREA_OBJ_ID}.{self.f['tipo_de_area']}",
-                "area_state": f"$answers.{self.Location.f['area_state']}",
-                "area_status": f"$answers.{self.Location.f['area_status']}",
-            }}
-        ]
-        return self.format_cr(self.cr.aggregate(query))
-
-    def get_area_by_id(self, record_id):
-        if not record_id:
-            raise Exception("Record ID is required to get area details.")
-
-        query = [
-            {"$match": {
-                "_id": ObjectId(record_id),
-                "form_id": self.Location.AREAS_DE_LAS_UBICACIONES,
-                "deleted_at": {"$exists": False},
-            }},
             {"$project": {
                 "folio": 1,
                 "area": f"$answers.{self.Location.f['area']}",
@@ -1051,26 +1048,7 @@ class Accesos( Accesos):
                 "area_status": f"$answers.{self.Location.f['area_status']}",
             }}
         ]
-        r = self.format_cr(self.cr.aggregate(query), get_one=True)
-        if not r:
-            return None
-        return {
-            "folio": r.get("folio", ""),
-            "record_id": r.get("_id", ""),
-            "rondin_area": r.get("area", ""),
-            "ubicacion": r.get("ubicacion", ""),
-            "geolocalizacion_area_ubicacion": [
-                {
-                    "latitude": r.get("latitude", 0.0),
-                    "longitude": r.get("longitude", 0.0)
-                }
-            ],
-            "area_tag_id": [r.get("tag_id", "")],
-            "foto_area": r.get("image", []),
-            "tipo_de_area": r.get("tipo_de_area", ""),
-            "area_state": r.get("area_state", ""),
-            "area_status": r.get("area_status", ""),
-        }
+        return self.format_cr(self.cr.aggregate(query))
 
     def update_area_estado(self, record_id, estado):
         answers = {self.Location.f['area_state']: estado}

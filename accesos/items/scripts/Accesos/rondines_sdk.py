@@ -145,10 +145,26 @@ def get_catalog_areas_formatted(params):
     return dispatch("get_catalog_areas_formatted", params={
         'locations': data.get('locations', []),
         'limit': data.get('limit', 25),
-        'skip': data.get('offset', 0),
+        'offset': data.get('offset', 0),
         'search': data.get('search', ''),
         'search_fields': data.get('search_fields',[]),
         'dynamic_filters': data.get('dynamic_filters', []),
+    }, method='post', **params)
+
+def get_rondines_by_area(params):
+    data = params.get("data", {})
+    return dispatch("get_rondines_by_area", params={
+        'area_id': data.get('area_id', ''),
+        'limit': data.get('limit', 25),
+        'offset': data.get('offset', 0),
+    }, method='post', **params)
+
+def get_incidencias_by_area(params):
+    data = params.get("data", {})
+    return dispatch("get_incidencias_by_area", params={
+        'area_id': data.get('area_id', ''),
+        'limit': data.get('limit', 25),
+        'offset': data.get('offset', 0),
     }, method='post', **params)
 
 def get_area_by_id(params):
@@ -186,10 +202,14 @@ def create_area(params):
         'foto_area': data.get('foto_area', []),
         'qr_area': data.get('qr_area', ''),
         'geolocalizacion': data.get('geolocalizacion'),
+        'multiple_ubicacion': data.get('multiple_ubicacion', 'no'),
     }, method='post', **params)
 
 def filters_areas(params):
     return dispatch("filters_areas", params={}, method='get', **params)
+
+def catalog_direcciones(params):
+    return dispatch("catalog_direcciones", params={}, method='get', **params)
 
 def catalago_grupos_recorridos(params):
     return dispatch("catalago_grupos_recorridos", params={}, method='get', **params)
@@ -245,6 +265,8 @@ DISPATCHER = {
     "get_rondin_by_id": get_rondin_by_id,
     "get_incidencias_rondines": get_incidencias_rondines,
     "get_rondines_images": get_rondines_images,
+    "get_rondines_by_area":get_rondines_by_area,
+    "get_incidencias_by_area":get_incidencias_by_area,
     "get_bitacora_rondines": get_bitacora_rondines,
     "get_check_by_id": get_check_by_id,
     "get_bitacora_by_id": get_bitacora_by_id,
@@ -254,6 +276,7 @@ DISPATCHER = {
     "update_area_estado": update_area_estado,
     "update_area_disponibilidad": update_area_disponibilidad,
     "create_area": create_area,
+    "catalog_direcciones": catalog_direcciones,
     "filters_areas": filters_areas,
     "catalago_grupos_recorridos": catalago_grupos_recorridos,
     "catalogo_inspecciones": catalogo_inspecciones,
