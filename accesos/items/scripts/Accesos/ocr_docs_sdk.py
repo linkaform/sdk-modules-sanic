@@ -9,7 +9,7 @@ def ocr_id(params):
     return dispatch("ocr_identificacion", params={
         'image_source': data.get('image_source', ''),
         'form_id': data.get('form_id'),
-        'model': data.get('model', 'google/gemini-2.5-flash-lite'),
+        'model': data.get('model', 'google/gemini-3.5-flash-lite'),
         'name': data.get('name'),
         'is_employee': data.get('is_employee', False),
     }, method='post', **params)
@@ -38,7 +38,7 @@ def ocr_articulo_perdido(params):
     data = params.get("data", {})
     return dispatch("ocr_articulo_perdido", params={
         'image_source': data.get('image_source', ''),
-        'model': data.get('model', 'google/gemini-2.5-flash-lite'),
+        'model': data.get('model', 'google/gemini-3.5-flash-lite'),
     }, method='post', **params)
 
 def ocr_articulo(params):
@@ -49,7 +49,7 @@ def ocr_articulo(params):
     return dispatch("ocr_articulo_concesionado", params={
         'image_source': data.get('image_source', ''),
         'extra_instructions': data.get('extra_instructions', ''),
-        'model': data.get('model', 'google/gemini-2.5-flash-lite'),
+        'model': data.get('model', 'google/gemini-3.5-flash-lite'),
     }, method='post', **params)
 
 def ocr_paquete(params):
@@ -58,7 +58,7 @@ def ocr_paquete(params):
         'image_source': data.get('image_source', ''),
         'fields': data.get('fields', {}),
         'extra_instructions': data.get('extra_instructions', ''),
-        'model': data.get('model', 'google/gemini-2.5-flash-lite'),
+        'model': data.get('model', 'google/gemini-3.5-flash-lite'),
     }, method='post', **params)
 
 def ocr_truck(params):
@@ -67,7 +67,7 @@ def ocr_truck(params):
         'image_source': data.get('image_source', ''),
         'fields': data.get('fields', {}),
         'extra_instructions': data.get('extra_instructions', ''),
-        'model': data.get('model', 'google/gemini-2.5-flash-lite'),
+        'model': data.get('model', 'google/gemini-3.5-flash-lite'),
     }, method='post', **params)
 
 def ocr_vehiculo(params):
@@ -76,7 +76,7 @@ def ocr_vehiculo(params):
         'image_source': data.get('image_source', ''),
         'fields': data.get('fields', {}),
         'extra_instructions': data.get('extra_instructions', ''),
-        'model': data.get('model', 'google/gemini-2.5-flash-lite'),
+        'model': data.get('model', 'google/gemini-3.5-flash-lite'),
     }, method='post', **params)
 
 def ocr_persona(params):
@@ -84,7 +84,7 @@ def ocr_persona(params):
     return dispatch("ocr_persona", params={
         'image_source': data.get('image_source', ''),
         'extra_instructions': data.get('extra_instructions', ''),
-        'model': data.get('model', 'google/gemini-2.5-flash-lite'),
+        'model': data.get('model', 'google/gemini-3.5-flash-lite'),
     }, method='post', **params)
 
 def ocr_equipo(params):
@@ -92,7 +92,7 @@ def ocr_equipo(params):
     return dispatch("ocr_equipo", params={
         'image_source': data.get('image_source', ''),
         'extra_instructions': data.get('extra_instructions', ''),
-        'model': data.get('model', 'google/gemini-2.5-flash-lite'),
+        'model': data.get('model', 'google/gemini-3.5-flash-lite'),
     }, method='post', **params)
 
 def ocr_acceso_transportista(params):
@@ -100,7 +100,7 @@ def ocr_acceso_transportista(params):
     return dispatch("ocr_acceso_transportista", params={
         'image_source': data.get('image_source', []),
         'extra_instructions': data.get('extra_instructions', ''),
-        'model': data.get('model', 'google/gemini-2.5-flash'),
+        'model': data.get('model', 'google/gemini-3.5-flash'),
     }, method='post', **params)
 
 
