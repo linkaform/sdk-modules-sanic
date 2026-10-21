@@ -49,7 +49,19 @@ def get_booth_config(params):
     }, method='get', **params)
 
 
+def _reporte(end_point, keys):
+    def handler(params):
+        data = params.get("data", {})
+        return dispatch(end_point, module='employee', params={k: data.get(k) for k in keys if data.get(k) is not None},
+                        method='post', **params)
+    return handler
+
+
 DISPATCHER = {
+    "reporte_asistencia": _reporte("reporte/asistencia", ["group_by", "locations", "month", "year"]),
+    "reporte_ubicaciones": _reporte("reporte/ubicaciones", []),
+    "reporte_detalle": _reporte("reporte/detalle", ["user_ids", "selected_day", "location", "month", "year"]),
+    "reporte_registros": _reporte("reporte/registros", ["locations", "month", "year", "limit", "offset"]),
     "get_asistencia": get_asistencia,
     "set_asistencia": set_asistencia,
     "get_checkin": get_checkin,
