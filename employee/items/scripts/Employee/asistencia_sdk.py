@@ -21,6 +21,9 @@ def confirmar_extra(params):
 def cierre_automatico(params):
     return dispatch("asistencia/cierre_automatico", module='employee', params={}, method='post', **params)
 
+def get_bandeja(params):
+    return dispatch("bandeja", module='employee', method='get', **params)
+
 def get_checkin(params):
     return dispatch("checkin", module='employee', method='get', **params)
 
@@ -72,6 +75,7 @@ DISPATCHER = {
     "set_asistencia": set_asistencia,
     "confirmar_extra": confirmar_extra,
     "cierre_automatico": cierre_automatico,
+    "get_bandeja": get_bandeja,
     "get_checkin": get_checkin,
     "get_lugares": get_lugares,
     "get_roles": get_roles,
