@@ -58,10 +58,10 @@ def _reporte(end_point, keys):
 
 
 DISPATCHER = {
-    "reporte_asistencia": _reporte("reporte/asistencia", ["group_by", "locations", "month", "year"]),
+    "reporte_hoy": _reporte("reporte/hoy", ["locations"]),
+    "reporte_periodo": _reporte("reporte/periodo", ["desde", "hasta", "locations"]),
+    "reporte_dia": _reporte("reporte/dia", ["user_id", "fecha"]),
     "reporte_ubicaciones": _reporte("reporte/ubicaciones", []),
-    "reporte_detalle": _reporte("reporte/detalle", ["user_ids", "selected_day", "location", "month", "year"]),
-    "reporte_registros": _reporte("reporte/registros", ["locations", "month", "year", "limit", "offset"]),
     "get_asistencia": get_asistencia,
     "set_asistencia": set_asistencia,
     "get_checkin": get_checkin,
