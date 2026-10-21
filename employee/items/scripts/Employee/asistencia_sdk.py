@@ -16,7 +16,16 @@ def set_asistencia(params):
     }, method='post', **params)
 
 def confirmar_extra(params):
-    return dispatch("asistencia/extra", module='employee', params={}, method='post', **params)
+    data = params.get("data", {})
+    return dispatch("asistencia/extra", module='employee', params={'motivo': data.get('motivo')}, method='post', **params)
+
+def resolver_bandeja(params):
+    data = params.get("data", {})
+    return dispatch("bandeja/resolver", module='employee', params={
+        'id': data.get('id'),
+        'decision': data.get('decision'),
+        'comentario': data.get('comentario'),
+    }, method='post', **params)
 
 def cierre_automatico(params):
     return dispatch("asistencia/cierre_automatico", module='employee', params={}, method='post', **params)
@@ -76,6 +85,7 @@ DISPATCHER = {
     "confirmar_extra": confirmar_extra,
     "cierre_automatico": cierre_automatico,
     "get_bandeja": get_bandeja,
+    "resolver_bandeja": resolver_bandeja,
     "get_checkin": get_checkin,
     "get_lugares": get_lugares,
     "get_roles": get_roles,
