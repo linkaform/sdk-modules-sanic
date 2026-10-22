@@ -1008,32 +1008,11 @@ class Accesos( Accesos):
             },
         ]
 
-    def get_areas_details(self, areas_list, dynamic_filters=None):
-        match_query = {
-            "form_id": self.Location.AREAS_DE_LAS_UBICACIONES,
-            "deleted_at": {"$exists": False},
-            f"answers.{self.Location.f['area']}": {"$in": areas_list},
-        }
-        if dynamic_filters:
-            for item in dynamic_filters:
-                if item.get('key') == 'tipo':
-                    match_query[f"answers.{self.Location.TIPO_AREA_OBJ_ID}.{self.f['tipo_de_area']}"] = {"$in": item.get('value')}
-                elif item.get('key') == 'estado':
-                    match_query[f"answers.{self.Location.f['area_state']}"] = {"$in": item.get('value')}
-                elif item.get('key') == 'disponibilidad':
-                    match_query[f"answers.{self.Location.f['area_status']}"] = {"$in": item.get('value')}
-                elif item.get('key') == 'tipo_identificador':
-                    # Tag = el área tiene area_tag_id capturado; QR = no lo tiene
-                    # (toda área se puede checar por el QR de su record_id).
-                    # Con ambas opciones o ninguna no se filtra.
-                    tipos_identificador = set(item.get('value') or [])
-                    tag_field = f"answers.{self.f['area_tag_id']}"
-                    if tipos_identificador == {'tag'}:
-                        match_query[tag_field] = {"$exists": True, "$nin": [None, "", []]}
-                    elif tipos_identificador == {'qr'}:
-                        match_query[tag_field] = {"$in": [None, "", []]}
-                else:
-                    continue
+    def get_areas_details(self, areas_list, dynamic_filters=None, facets=None):
+        match_query = self.areas_details_match(areas_list, dynamic_filters)
+        facet_conditions = self.build_facets_match(self.areas_search_fields(), facets)
+        if facet_conditions:
+            match_query["$and"] = facet_conditions
         query = [
             {"$match": match_query},
             {"$project": {

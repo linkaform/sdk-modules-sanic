@@ -27,7 +27,6 @@ def get_incidences(params):
     return dispatch("get_incidences", params={
         **_filtros_incidencias(data),
         'prioridades': data.get('prioridades', []),
-        # Con limit el listado viene paginado (buscador avanzado).
         'limit': data.get('limit'),
         'skip': data.get('skip', 0),
     }, method='post', **params)

@@ -149,6 +149,18 @@ def get_catalog_areas_formatted(params):
         'search': data.get('search', ''),
         'search_fields': data.get('search_fields',[]),
         'dynamic_filters': data.get('dynamic_filters', []),
+        'facets': data.get('facets', []),
+    }, method='post', **params)
+
+def get_search_fields_areas(params):
+    return dispatch("get_search_fields_areas", params={}, method='get', **params)
+
+def get_search_counts_areas(params):
+    data = params.get("data", {})
+    return dispatch("get_search_counts_areas", params={
+        'locations': data.get('locations', []),
+        'facets': data.get('facets', []),
+        'candidates': data.get('candidates', []),
     }, method='post', **params)
 
 def get_rondines_by_area(params):
@@ -271,6 +283,8 @@ DISPATCHER = {
     "get_check_by_id": get_check_by_id,
     "get_bitacora_by_id": get_bitacora_by_id,
     "get_catalog_areas_formatted": get_catalog_areas_formatted,
+    "get_search_fields_areas": get_search_fields_areas,
+    "get_search_counts_areas": get_search_counts_areas,
     "get_area_by_id": get_area_by_id,
     "get_area_pdf": get_area_pdf,
     "update_area_estado": update_area_estado,
