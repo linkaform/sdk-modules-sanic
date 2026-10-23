@@ -66,6 +66,9 @@ def delete_incidence(params):
         'folio': folio if isinstance(folio, list) else ([folio] if folio else []),
     }, method='get', **params)
 
+def get_incidence_permissions(params):
+    return dispatch("get_incidence_permissions", params={}, method='get', **params)
+
 def catalogo_area_empleado(params):
     data = params.get("data", {})
     return dispatch("catalogo_area_empleado_incidencias", params={
@@ -92,6 +95,7 @@ DISPATCHER = {
     "update_incidence": update_incidence,
     "update_incidence_seguimiento": update_incidence_seguimiento,
     "delete_incidence": delete_incidence,
+    "get_incidence_permissions": get_incidence_permissions,
     "catalogo_area_empleado": catalogo_area_empleado,
     "catalogo_incidencias_plano": catalogo_incidencias_plano,
     "get_pdf": get_pdf,
