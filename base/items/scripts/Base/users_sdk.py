@@ -24,6 +24,9 @@ def get_user_detail(params):
         'record_id': data.get('record_id', ''),
     }, method='post', **params)
 
+def get_user_options(params):
+    return dispatch("get_user_options", module='base', params={}, method='get', **params)
+
 def create_user(params):
     data = params.get("data", {})
     return dispatch("create_user", module='base', params={
@@ -34,6 +37,8 @@ def create_user(params):
         'role': data.get('role', ''),
         'empleado': data.get('empleado', ''),
         'empleado_nombre': data.get('empleado_nombre', ''),
+        'timezone': data.get('timezone', ''),
+        'language': data.get('language', ''),
     }, method='post', **params)
 
 def update_user(params):
@@ -44,6 +49,8 @@ def update_user(params):
         'phone': data.get('phone'),
         'role': data.get('role'),
         'email': data.get('email'),
+        'timezone': data.get('timezone'),
+        'language': data.get('language'),
     }, method='post', **params)
 
 def reset_password(params):
@@ -52,13 +59,22 @@ def reset_password(params):
         'record_id': data.get('record_id', ''),
     }, method='post', **params)
 
+def create_users(params):
+    data = params.get("data", {})
+    return dispatch("create_users", module='base', params={
+        'rows': data.get('rows', []),
+        'create_employee': data.get('create_employee', False),
+    }, method='post', **params)
+
 
 DISPATCHER = {
     "list_users": list_users,
     "get_user_detail": get_user_detail,
+    "get_user_options": get_user_options,
     "create_user": create_user,
     "update_user": update_user,
     "reset_password": reset_password,
+    "create_users": create_users,
 }
 
 if __name__ == "__main__":
