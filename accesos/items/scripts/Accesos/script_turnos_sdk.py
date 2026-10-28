@@ -127,10 +127,6 @@ def update_bitacora_entrada(params):
     data = params.get("data", {})
     return dispatch("update_bitacora_entrada", params=data, method='post', **params)
 
-def update_bitacora_entrada_many(params):
-    data = params.get("data", {})
-    return dispatch("update_bitacora_entrada_many", params=data, method='post', **params)
-
 def vehiculo_tipo(params):
     data = params.get("data", {})
     return dispatch("vehiculo_tipo", params={
@@ -204,7 +200,6 @@ DISPATCHER = {
     "do_out": do_out,
     "do_access": do_access,
     "update_bitacora_entrada": update_bitacora_entrada,
-    "update_bitacora_entrada_many": update_bitacora_entrada_many,
     "vehiculo_tipo": vehiculo_tipo,
     "update_guards": update_guards,
     "visita_a": visita_a,
