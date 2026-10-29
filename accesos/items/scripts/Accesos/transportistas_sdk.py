@@ -145,4 +145,11 @@ if __name__ == "__main__":
         sys.stdout.write(simplejson.dumps(response_json))
     else:
         response = action()
-        sys.stdout.write(simplejson.dumps(response.json()))
+        body = response.json()
+        if response.status_code >= 400:
+            # Mismo formato que un LKFException del script viejo: el mini-back
+            # lo extrae del stderr y responde success:false con error.exception.
+            exception = body if 'msg' in body else {'title': 'Error', 'msg': [body.get('error', str(body))]}
+            sys.stderr.write('Exception: ' + simplejson.dumps({'exception': exception}))
+            sys.exit(1)
+        sys.stdout.write(simplejson.dumps(body))
