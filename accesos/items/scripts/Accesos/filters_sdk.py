@@ -16,6 +16,7 @@ DISPATCHER = {
     "concesionados": "filters_concesionados",
     "perdidos": "filters_perdidos",
     "notas": "filters_notas",
+    "transportistas": "filters_transportistas",
     "areas": "filters_areas",
     "ubicaciones": "filters_ubicaciones",
 }
