@@ -40,8 +40,9 @@ def get_bitac_transportista_records(api_key, params, data):
 def get_horarios_data(api_key, params, dia):
     return dispatch_with_api_key("get_horarios_data", api_key, params={'dia': dia}, method='get', **params)
 
-def get_pass_transportista(api_key, params, record_id, token):
-    return dispatch_with_api_key("get_pass_transportista", api_key, params={'record_id': record_id, 'token': token}, method='get', **params)
+def get_pass_transportista(api_key, params, record_id, token, folio):
+    query = {k: v for k, v in {'record_id': record_id, 'token': token, 'folio': folio}.items() if v}
+    return dispatch_with_api_key("get_pass_transportista", api_key, params=query, method='get', **params)
 
 def get_users_data(api_key, params, locations):
     return dispatch_with_api_key("get_users_data_transportista", api_key, params={'locations': locations}, method='get', **params)
@@ -70,6 +71,32 @@ def save_inspecciones(api_key, params, record_id, inspecciones):
 def save_inspecciones_sello(api_key, params, record_id, inspecciones):
     return dispatch_with_api_key("save_inspecciones_sello", api_key, params={'record_id': record_id, 'inspecciones': inspecciones}, method='post', **params)
 
+def get_search_fields(api_key, params):
+    return dispatch_with_api_key("get_search_fields_transportistas", api_key, params={}, method='get', **params)
+
+def get_search_counts(api_key, params, data):
+    query = {k: data.get(k) for k in ("date_from", "date_to", "facets", "candidates") if data.get(k) is not None}
+    return dispatch_with_api_key("get_search_counts_transportistas", api_key, params=query, method='post', **params)
+
+def get_inspeccion_record(api_key, params, record_id, tipo):
+    return dispatch_with_api_key("get_inspeccion_record", api_key, params={'record_id': record_id, 'tipo': tipo}, method='get', **params)
+
+def get_fotografias(api_key, params, registros):
+    return dispatch_with_api_key("get_fotografias_transportista", api_key, params={'registros': registros}, method='post', **params)
+
+def get_form_fields(api_key, params, form_ids):
+    return dispatch_with_api_key("get_form_fields_transportista", api_key, params={'form_ids': form_ids}, method='post', **params)
+
+def get_config_flujo_transportistas(api_key, params):
+    return dispatch_with_api_key("get_config_flujo_transportistas", api_key, params={}, method='get', **params)
+
+def get_formas_inspeccion_transportista(api_key, params, ubicacion):
+    query = {'ubicacion': ubicacion} if ubicacion else {}
+    return dispatch_with_api_key("get_formas_inspeccion_transportista", api_key, params=query, method='get', **params)
+
+def send_aviso_correo_transportista(api_key, params, record_id, email_to):
+    return dispatch_with_api_key("send_aviso_correo_transportista", api_key, params={'record_id': record_id, 'email_to': email_to}, method='post', **params)
+
 
 if __name__ == "__main__":
     params = simplejson.loads(sys.argv[2])
@@ -92,7 +119,7 @@ if __name__ == "__main__":
         "get_bitac_transportista_record": lambda: get_bitac_transportista_record(api_key, params, record_id),
         "get_bitac_transportista_records": lambda: get_bitac_transportista_records(api_key, params, data),
         "get_horarios_data": lambda: get_horarios_data(api_key, params, data.get('dia')),
-        "get_pass_transportista": lambda: get_pass_transportista(api_key, params, record_id, token),
+        "get_pass_transportista": lambda: get_pass_transportista(api_key, params, record_id, token, data.get("folio")),
         "get_users_data": lambda: get_users_data(api_key, params, locations),
         "get_location_data": lambda: get_location_data(api_key, params, location),
         "get_proveedores_transportista": lambda: get_proveedores_transportista(api_key, params),
@@ -102,6 +129,14 @@ if __name__ == "__main__":
         "delete_bitac_transportista_items": lambda: delete_bitac_transportista_items(api_key, params, record_id, payload),
         "save_inspecciones": lambda: save_inspecciones(api_key, params, record_id, inspecciones),
         "save_inspecciones_sello": lambda: save_inspecciones_sello(api_key, params, record_id, inspecciones),
+        "get_search_fields": lambda: get_search_fields(api_key, params),
+        "get_search_counts": lambda: get_search_counts(api_key, params, data),
+        "get_inspeccion_record": lambda: get_inspeccion_record(api_key, params, record_id, data.get('tipo', '')),
+        "get_fotografias": lambda: get_fotografias(api_key, params, data.get("registros", [])),
+        "get_form_fields": lambda: get_form_fields(api_key, params, data.get("form_ids", [])),
+        "get_config_flujo_transportistas": lambda: get_config_flujo_transportistas(api_key, params),
+        "get_formas_inspeccion_transportista": lambda: get_formas_inspeccion_transportista(api_key, params, data.get("ubicacion")),
+        "send_aviso_correo_transportista": lambda: send_aviso_correo_transportista(api_key, params, record_id, data.get("email_to")),
     }
 
     action = dispatcher.get(option)
