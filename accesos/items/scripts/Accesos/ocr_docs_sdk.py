@@ -103,6 +103,13 @@ def ocr_acceso_transportista(params):
         'model': data.get('model', 'google/gemini-3.5-flash'),
     }, method='post', **params)
 
+def transcribir_audio(params):
+    data = params.get("data", {})
+    return dispatch("transcribir_audio", params={
+        'audio_source': data.get('audio_source', ''),
+        'model': data.get('model', 'google/gemini-3.5-flash-lite'),
+    }, method='post', **params)
+
 
 DISPATCHER = {
     "ocr_id": ocr_id,
@@ -116,6 +123,7 @@ DISPATCHER = {
     "ocr_persona": ocr_persona,
     "ocr_equipo": ocr_equipo,
     "ocr_acceso_transportista": ocr_acceso_transportista,
+    "transcribir_audio": transcribir_audio,
 }
 
 if __name__ == "__main__":
