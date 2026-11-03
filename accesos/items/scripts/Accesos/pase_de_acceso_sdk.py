@@ -36,6 +36,7 @@ def catalogos_pase_area(params):
     data = params.get("data", {})
     return dispatch("catalogos_pase_area", params={
         'location_name': data.get('location', ''),
+        'uso': data.get('uso', ''),
     }, method='get', **params)
 
 def catalogos_pase_location(params):

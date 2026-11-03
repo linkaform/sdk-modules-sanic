@@ -21,6 +21,7 @@ def claim_rondin(params):
     data = params.get("data", {})
     return dispatch("claim_rondin", params={
         'record_id': data.get('record_id', ''),
+        'user_id': data.get('user_id'),
     }, method='post', **params)
 
 def create_incidencia_by_rondin(params):
@@ -43,29 +44,48 @@ def edit_areas_rondin(params):
         'record_id': data.get('record_id', ''),
     }, method='post', **params)
 
+
+
+def _passthrough(end_point, params, method='post'):
+    """ Reenvia el payload de la pantalla tal cual (facets, paginated, locations, fechas...) a sanic. """
+    data = {k: v for k, v in (params.get("data", {}) or {}).items() if k not in ('option', 'script_name')}
+    return dispatch(end_point, params=data, method=method, **params)
+
 def get_recorridos(params):
-    data = params.get("data", {})
-    return dispatch("get_recorridos", params={
-        'date_from': data.get('date_from', ''),
-        'date_to': data.get('date_to', ''),
-        'area_details': data.get('area_details', False),
-        'limit': data.get('limit', 20),
-        'offset': data.get('offset', 0),
-    }, method='get', **params)
+    return _passthrough("get_recorridos", params)
 
 def get_bitacora(params):
-    data = params.get("data", {})
-    current_record = params.get('current_record', {}) or {}
-    return dispatch("get_bitacora", params={
-        'date_from': data.get('date_from', ''),
-        'date_to': data.get('date_to', ''),
-        'area_details': data.get('area_details', False),
-        'limit': data.get('limit', 15),
-        'offset': data.get('offset', 0),
-        'ubicacion': data.get('ubicacion', ''),
-        'nombre_rondin': data.get('nombre_rondin', ''),
-        'timezone': data.get('timezone') or current_record.get('timezone', 'America/Mexico_City'),
-    }, method='get', **params)
+    return _passthrough("get_bitacora", params)
+
+def get_all_checks(params):
+    return _passthrough("get_all_checks", params)
+
+def get_incidencias_rondines(params):
+    return _passthrough("get_incidencias_rondines", params)
+
+def get_search_fields_recorridos(params):
+    return dispatch("get_search_fields_recorridos", params={}, method='get', **params)
+
+def get_search_counts_recorridos(params):
+    return _passthrough("get_search_counts_recorridos", params)
+
+def get_search_fields_rondines(params):
+    return dispatch("get_search_fields_rondines", params={}, method='get', **params)
+
+def get_search_counts_rondines(params):
+    return _passthrough("get_search_counts_rondines", params)
+
+def get_search_fields_check_areas(params):
+    return dispatch("get_search_fields_check_areas", params={}, method='get', **params)
+
+def get_search_counts_check_areas(params):
+    return _passthrough("get_search_counts_check_areas", params)
+
+def get_search_fields_incidencias_rondines(params):
+    return dispatch("get_search_fields_incidencias_rondines", params={}, method='get', **params)
+
+def get_search_counts_incidencias_rondines(params):
+    return _passthrough("get_search_counts_incidencias_rondines", params)
 
 def get_catalog_areas(params):
     data = params.get("data", {})
@@ -73,16 +93,6 @@ def get_catalog_areas(params):
         'ubicacion': data.get('ubicacion', ''),
     }, method='get', **params)
 
-def get_all_checks(params):
-    data = params.get("data", {})
-    return dispatch("get_all_checks", params={
-        'ubicacion': data.get('ubicacion', ''),
-        'nombre_rondin': data.get('nombre_rondin', ''),
-        'area': data.get('area', ''),
-        'date_from': data.get('date_from', ''),
-        'date_to': data.get('date_to', ''),
-        'limit': data.get('limit', 500),
-    }, method='get', **params)
 
 def get_rondin_by_id(params):
     data = params.get("data", {})
@@ -90,16 +100,6 @@ def get_rondin_by_id(params):
         'record_id': data.get('record_id', ''),
     }, method='get', **params)
 
-def get_incidencias_rondines(params):
-    data = params.get("data", {})
-    return dispatch("get_incidencias_rondines", params={
-        'ubicacion': data.get('ubicacion', ''),
-        'area': data.get('area', ''),
-        'date_from': data.get('date_from', ''),
-        'date_to': data.get('date_to', ''),
-        'limit': data.get('limit', 20),
-        'offset': data.get('offset', 0),
-    }, method='get', **params)
 
 def get_rondines_images(params):
     data = params.get("data", {})
@@ -141,9 +141,10 @@ def get_bitacora_by_id(params):
 
 def get_catalog_areas_formatted(params):
     data = params.get("data", {})
-    print("data",data)
+    # el front del modal de recorridos manda una sola `ubicacion`; la pantalla de areas manda `locations`
+    locations = data.get('locations') or ([data['ubicacion']] if data.get('ubicacion') else [])
     return dispatch("get_catalog_areas_formatted", params={
-        'locations': data.get('locations', []),
+        'locations': locations,
         'limit': data.get('limit', 25),
         'offset': data.get('offset', 0),
         'search': data.get('search', ''),
@@ -299,6 +300,14 @@ DISPATCHER = {
     "update_inspeccion": update_inspeccion,
     "asignar_recorrido": asignar_recorrido,
     "run_rondin": run_cron,
+    "get_search_fields_recorridos": get_search_fields_recorridos,
+    "get_search_counts_recorridos": get_search_counts_recorridos,
+    "get_search_fields_rondines": get_search_fields_rondines,
+    "get_search_counts_rondines": get_search_counts_rondines,
+    "get_search_fields_check_areas": get_search_fields_check_areas,
+    "get_search_counts_check_areas": get_search_counts_check_areas,
+    "get_search_fields_incidencias_rondines": get_search_fields_incidencias_rondines,
+    "get_search_counts_incidencias_rondines": get_search_counts_incidencias_rondines,
     "run_cron": run_cron,
     "get_area_by_id": get_area_by_id,
 }
