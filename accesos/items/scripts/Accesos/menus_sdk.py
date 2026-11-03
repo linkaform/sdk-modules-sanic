@@ -19,7 +19,8 @@ def set_permissions(params):
 
 DISPATCHER = {
     "get_menus": get_menus,
-    "set_permissions": set_permissions,
+    # Deshabilitado (1509): set_item_permits descomparte sin guardas.
+    # "set_permissions": set_permissions,
 }
 
 
