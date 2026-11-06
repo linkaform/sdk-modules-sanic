@@ -61,6 +61,21 @@ def get_empleados_by_ubicacion(params):
     }, method='get', **params)
 
 
+def get_config_seguridad_ubicacion(params):
+    data = params.get("data", {})
+    return dispatch("get_config_seguridad_ubicacion", module='location', params={
+        'ubicacion': data.get('ubicacion', ''),
+    }, method='get', **params)
+
+
+def update_config_seguridad_ubicacion(params):
+    data = params.get("data", {})
+    return dispatch("update_config_seguridad_ubicacion", module='location', params={
+        'ubicacion': data.get('ubicacion', ''),
+        'config': data.get('config', {}),
+    }, method='post', **params)
+
+
 def create_ubicacion(params):
     data = params.get("data", {})
     return dispatch("create_ubicacion", module='location', params={
@@ -113,6 +128,8 @@ DISPATCHER = {
     "get_search_counts_ubicaciones": get_search_counts_ubicaciones,
     "get_ubicacion_by_id": get_ubicacion_by_id,
     "get_empleados_by_ubicacion": get_empleados_by_ubicacion,
+    "get_config_seguridad_ubicacion": get_config_seguridad_ubicacion,
+    "update_config_seguridad_ubicacion": update_config_seguridad_ubicacion,
     "create_ubicacion": create_ubicacion,
     "update_ubicacion": update_ubicacion,
     "create_contacto": create_contacto,
