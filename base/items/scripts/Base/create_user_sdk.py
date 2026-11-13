@@ -56,7 +56,9 @@ if __name__ == "__main__":
         raise Exception(response.text)
 
     data = response.json().get('data', {})
-    if status in ('activado', 'creado'):
+    # 'activated': workflow after del alta (LinkaForm manda las respuestas
+    # originales, en 'crear'); Sanic ya activo el registro y no hay que reemplazar.
+    if status in ('activado', 'creado') or data.get('activated'):
         sys.stdout.write(simplejson.dumps({'status': 200}))
     else:
         sys.stdout.write(simplejson.dumps({
