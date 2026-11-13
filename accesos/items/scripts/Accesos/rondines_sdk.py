@@ -188,9 +188,12 @@ def get_area_by_id(params):
 
 def get_area_pdf(params):
     data = params.get("data", {})
-    return dispatch("get_pdf", params={
-        'qr_code': data.get('qr_code', ''),
-    }, method='get', **params)
+    query = {'qr_code': data.get('qr_code', '')}
+    # Plantilla PDF elegida (Imprimir plantilla QR de Areas). Sin ella, /get_pdf
+    # usa la plantilla por defecto de la forma.
+    if data.get('template_id'):
+        query['template_id'] = data['template_id']
+    return dispatch("get_pdf", params=query, method='get', **params)
 
 def update_area_estado(params):
     data = params.get("data", {})
