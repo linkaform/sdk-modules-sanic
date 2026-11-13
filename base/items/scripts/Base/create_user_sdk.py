@@ -4,6 +4,8 @@
 # Dos fases con el mismo script (igual que el create_user.py de addons):
 #  - 'crear'    (runtime before): POST /base/create_user_account. Da de alta el
 #    usuario y regresa las respuestas en 'creado' como replace_ans.
+#  - 'creado' sin liga (runtime after, alta con contraseña capturada):
+#    POST /base/activate_with_password. Pasa el registro a 'activado'.
 #  - 'activado' (runtime after, cuando el usuario fija su contraseña):
 #    POST /base/setup_user_employee. Crea o liga el empleado y su Configuracion
 #    Accesos.
@@ -20,6 +22,13 @@ def create_user_account(record_id, answers, params):
     }, method='post', **params)
 
 
+def activate_with_password(record_id, answers, params):
+    return dispatch("activate_with_password", module='base', params={
+        'record_id': record_id,
+        'answers': answers,
+    }, method='post', **params)
+
+
 def setup_user_employee(answers, params):
     return dispatch("setup_user_employee", module='base', params={
         'answers': answers,
@@ -30,10 +39,14 @@ if __name__ == "__main__":
     current_record = simplejson.loads(sys.argv[1])
     params = simplejson.loads(sys.argv[2])
     answers = current_record.get('answers', {})
-    record_id = str(current_record.get('record_id') or '')
+    record_id = str(current_record.get('record_id')
+                    or (current_record.get('_id') or {}).get('$oid') or '')
 
-    if answers.get(STATUS_FIELD) == 'activado':
+    status = answers.get(STATUS_FIELD)
+    if status == 'activado':
         response = setup_user_employee(answers, params)
+    elif status == 'creado':
+        response = activate_with_password(record_id, answers, params)
     else:
         response = create_user_account(record_id, answers, params)
 
@@ -43,7 +56,9 @@ if __name__ == "__main__":
         raise Exception(response.text)
 
     data = response.json().get('data', {})
-    if answers.get(STATUS_FIELD) == 'activado':
+    # 'activated': workflow after del alta (LinkaForm manda las respuestas
+    # originales, en 'crear'); Sanic ya activo el registro y no hay que reemplazar.
+    if status in ('activado', 'creado') or data.get('activated'):
         sys.stdout.write(simplejson.dumps({'status': 200}))
     else:
         sys.stdout.write(simplejson.dumps({
