@@ -30,6 +30,20 @@ def get_catalog_ubicaciones_formatted(params):
         'offset': data.get('offset', 0),
         'search': data.get('search', ''),
         'search_fields': data.get('search_fields', []),
+        'facets': data.get('facets', []),
+    }, method='post', **params)
+
+
+def get_search_fields_ubicaciones(params):
+    return dispatch("get_search_fields_ubicaciones", module='location', params={}, method='get', **params)
+
+
+def get_search_counts_ubicaciones(params):
+    data = params.get("data", {})
+    return dispatch("get_search_counts_ubicaciones", module='location', params={
+        'locations': data.get('locations', []),
+        'facets': data.get('facets', []),
+        'candidates': data.get('candidates', []),
     }, method='post', **params)
 
 
@@ -95,6 +109,8 @@ def create_contacto(params):
 
 DISPATCHER = {
     "get_catalog_ubicaciones_formatted": get_catalog_ubicaciones_formatted,
+    "get_search_fields_ubicaciones": get_search_fields_ubicaciones,
+    "get_search_counts_ubicaciones": get_search_counts_ubicaciones,
     "get_ubicacion_by_id": get_ubicacion_by_id,
     "get_empleados_by_ubicacion": get_empleados_by_ubicacion,
     "create_ubicacion": create_ubicacion,

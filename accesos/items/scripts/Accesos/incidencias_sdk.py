@@ -27,7 +27,6 @@ def get_incidences(params):
     return dispatch("get_incidences", params={
         **_filtros_incidencias(data),
         'prioridades': data.get('prioridades', []),
-        # Con limit el listado viene paginado (buscador avanzado).
         'limit': data.get('limit'),
         'skip': data.get('skip', 0),
     }, method='post', **params)
@@ -59,12 +58,21 @@ def update_incidence_seguimiento(params):
         'area': data.get('area', ''),
     }, method='post', **params)
 
+def get_historial_incidencia(params):
+    data = params.get("data", {})
+    return dispatch("get_historial_incidencia", params={
+        'record_id': data.get('record_id', ''),
+    }, method='get', **params)
+
 def delete_incidence(params):
     data = params.get("data", {})
     folio = data.get('folio')
     return dispatch("delete_incidence", params={
         'folio': folio if isinstance(folio, list) else ([folio] if folio else []),
     }, method='get', **params)
+
+def get_incidence_permissions(params):
+    return dispatch("get_incidence_permissions", params={}, method='get', **params)
 
 def catalogo_area_empleado(params):
     data = params.get("data", {})
@@ -91,7 +99,9 @@ DISPATCHER = {
     "get_incidences": get_incidences,
     "update_incidence": update_incidence,
     "update_incidence_seguimiento": update_incidence_seguimiento,
+    "get_historial_incidencia": get_historial_incidencia,
     "delete_incidence": delete_incidence,
+    "get_incidence_permissions": get_incidence_permissions,
     "catalogo_area_empleado": catalogo_area_empleado,
     "catalogo_incidencias_plano": catalogo_incidencias_plano,
     "get_pdf": get_pdf,
