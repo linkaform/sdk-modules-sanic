@@ -1,7 +1,7 @@
 #!/usr/local/bin/python
 # coding: utf-8
 # Puente entre el script-runner de Django y las rutas /accesos/documentos/* de
-# Contratistas (F0-11, luego ME-06-B). El front de clave10 lo llama con
+# Contratistas (F0-11 y ME-06-B). El front de clave10 lo llama con
 # script_name="documentos_sdk.py" + option="<nombre de la ruta>".
 import sys, simplejson, lkf_addons
 from middleware.auth import dispatch
@@ -41,8 +41,47 @@ def analizar_documento(params):
     }, params)
 
 
+def list_documentos(params):
+    data = params.get("data", {})
+    return _post("list_documentos", {k: data.get(k) for k in (
+        'dueno_tipo', 'empresa_id', 'empleado_id', 'contrato_id', 'requerimiento_id', 'estatus', 'search',
+        'limit', 'offset') if data.get(k) is not None}, params)
+
+
+def get_documento(params):
+    data = params.get("data", {})
+    return _post("get_documento", {'documento_id': data.get('documento_id', '')}, params)
+
+
+def upload_documento(params):
+    data = params.get("data", {})
+    return _post("upload_documento", {'documento': data.get('documento', {})}, params)
+
+
+def review_documento(params):
+    data = params.get("data", {})
+    return _post("review_documento", {
+        'documento_id': data.get('documento_id', ''),
+        'decision': data.get('decision'),
+        'motivo': data.get('motivo', ''),
+    }, params)
+
+
+def comment_documento(params):
+    data = params.get("data", {})
+    return _post("comment_documento", {
+        'documento_id': data.get('documento_id', ''),
+        'texto': data.get('texto', ''),
+    }, params)
+
+
 DISPATCHER = {
     "analizar_documento": analizar_documento,
+    "list_documentos": list_documentos,
+    "get_documento": get_documento,
+    "upload_documento": upload_documento,
+    "review_documento": review_documento,
+    "comment_documento": comment_documento,
 }
 
 if __name__ == "__main__":
