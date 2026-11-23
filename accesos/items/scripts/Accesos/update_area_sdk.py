@@ -64,11 +64,24 @@ def update_full_area(params):
     }, method='post', **params)
 
 
+def create_impresion_qr(params):
+    data = params.get("data", {})
+    return dispatch("create_impresion_qr", params={
+        'paginas': data.get('paginas', 0),
+    }, method='post', **params)
+
+
+def get_plantillas_impresion_qr(params):
+    return dispatch("get_plantillas_impresion_qr", params={}, method='get', **params)
+
+
 # Llamadas desde el front (runScript con option). Sin option se comporta como
 # el hook de la forma Configuracion de Area.
 DISPATCHER = {
     "create_area": create_area,
     "update_full_area": update_full_area,
+    "create_impresion_qr": create_impresion_qr,
+    "get_plantillas_impresion_qr": get_plantillas_impresion_qr,
 }
 
 
