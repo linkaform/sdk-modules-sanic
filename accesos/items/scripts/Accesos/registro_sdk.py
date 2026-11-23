@@ -1,7 +1,7 @@
 #!/usr/local/bin/python
 # coding: utf-8
 # Puente PÚBLICO entre el script-runner de Django y /accesos/registro/* de
-# Contratistas (RG-01). La página de registro no tiene sesión: el front manda el
+# Contratistas (RG-01 y RG-03-B). La página de registro no tiene sesión: el front manda el
 # account_id de la URL y este script corre con el API key de ESA cuenta. No
 # acepta un api_key del cliente.
 import sys, simplejson, lkf_addons
@@ -41,8 +41,18 @@ def registrar_empresa(params):
     return _post("registrar_empresa", {'registro': data.get('registro', {})}, params)
 
 
+def leer_documento_registro(params):
+    data = params.get("data", {})
+    return _post("leer_documento_registro", {
+        'archivo': data.get('archivo', {}),
+        'tipo': data.get('tipo'),
+        'rfc': data.get('rfc'),
+    }, params)
+
+
 DISPATCHER = {
     "registrar_empresa": registrar_empresa,
+    "leer_documento_registro": leer_documento_registro,
 }
 
 if __name__ == "__main__":
