@@ -56,7 +56,32 @@ def get_aplicacion_requerimiento(params):
     return _post("get_aplicacion_requerimiento", {'requerimiento_id': data.get('requerimiento_id', '')}, params)
 
 
+def list_recursos(params):
+    data = params.get("data", {})
+    return _post("list_recursos", {k: data.get(k) for k in (
+        'tipo', 'categoria', 'clase', 'estatus', 'search', 'limit', 'offset') if data.get(k) is not None}, params)
+
+
+def get_recurso(params):
+    data = params.get("data", {})
+    return _post("get_recurso", {'recurso_id': data.get('recurso_id', '')}, params)
+
+
+def save_recurso(params):
+    data = params.get("data", {})
+    return _post("save_recurso", {'recurso': data.get('recurso', {}), 'recurso_id': data.get('recurso_id')}, params)
+
+
+def get_aplicacion_recurso(params):
+    data = params.get("data", {})
+    return _post("get_aplicacion_recurso", {'recurso_id': data.get('recurso_id', '')}, params)
+
+
 DISPATCHER = {
+    "list_recursos": list_recursos,
+    "get_recurso": get_recurso,
+    "save_recurso": save_recurso,
+    "get_aplicacion_recurso": get_aplicacion_recurso,
     "list_requerimientos": list_requerimientos,
     "get_requerimiento": get_requerimiento,
     "save_requerimiento": save_requerimiento,
