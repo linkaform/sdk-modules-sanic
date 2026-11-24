@@ -97,7 +97,41 @@ def cancel_sesion(params):
     return _post("cancel_sesion", {'sesion_id': data.get('sesion_id', ''), 'motivo': data.get('motivo', '')}, params)
 
 
+def get_participantes(params):
+    return _post("get_participantes", {'sesion_id': params.get("data", {}).get('sesion_id', '')}, params)
+
+
+def inscribir_participantes(params):
+    data = params.get("data", {})
+    return _post("inscribir_participantes", {'sesion_id': data.get('sesion_id', ''),
+                                             'empleado_ids': data.get('empleado_ids', [])}, params)
+
+
+def quitar_participante(params):
+    data = params.get("data", {})
+    return _post("quitar_participante", {'sesion_id': data.get('sesion_id', ''),
+                                         'empleado_id': data.get('empleado_id', '')}, params)
+
+
+def registrar_asistencia(params):
+    data = params.get("data", {})
+    return _post("registrar_asistencia", {'sesion_id': data.get('sesion_id', ''),
+                                          'asistencias': data.get('asistencias', [])}, params)
+
+
+def calificar_participante(params):
+    data = params.get("data", {})
+    return _post("calificar_participante", {'sesion_id': data.get('sesion_id', ''),
+                                            'empleado_id': data.get('empleado_id', ''),
+                                            'calificaciones': data.get('calificaciones', {})}, params)
+
+
 DISPATCHER = {
+    "get_participantes": get_participantes,
+    "inscribir_participantes": inscribir_participantes,
+    "quitar_participante": quitar_participante,
+    "registrar_asistencia": registrar_asistencia,
+    "calificar_participante": calificar_participante,
     "list_sesiones": list_sesiones,
     "get_sesion": get_sesion,
     "save_sesion": save_sesion,
