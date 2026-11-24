@@ -77,7 +77,31 @@ def get_aplicacion_recurso(params):
     return _post("get_aplicacion_recurso", {'recurso_id': data.get('recurso_id', '')}, params)
 
 
+def list_sesiones(params):
+    data = params.get("data", {})
+    return _post("list_sesiones", {k: data.get(k) for k in (
+        'tipo', 'modalidad', 'estatus', 'desde', 'hasta', 'search', 'limit', 'offset') if data.get(k) is not None}, params)
+
+
+def get_sesion(params):
+    return _post("get_sesion", {'sesion_id': params.get("data", {}).get('sesion_id', '')}, params)
+
+
+def save_sesion(params):
+    data = params.get("data", {})
+    return _post("save_sesion", {'sesion': data.get('sesion', {}), 'sesion_id': data.get('sesion_id')}, params)
+
+
+def cancel_sesion(params):
+    data = params.get("data", {})
+    return _post("cancel_sesion", {'sesion_id': data.get('sesion_id', ''), 'motivo': data.get('motivo', '')}, params)
+
+
 DISPATCHER = {
+    "list_sesiones": list_sesiones,
+    "get_sesion": get_sesion,
+    "save_sesion": save_sesion,
+    "cancel_sesion": cancel_sesion,
     "list_recursos": list_recursos,
     "get_recurso": get_recurso,
     "save_recurso": save_recurso,
