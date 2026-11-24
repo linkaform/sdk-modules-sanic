@@ -104,6 +104,30 @@ def restaurar_password_empleado(params):
                  params)
 
 
+def list_contratos_empleado(params):
+    return _post("list_contratos_empleado", _pick(params.get("data", {}), (
+        'empleado_id', 'estatus', 'search', 'limit', 'offset')), params)
+
+
+def list_contratos_para_ligar(params):
+    return _post("list_contratos_para_ligar", _pick(params.get("data", {}), (
+        'empleado_id', 'cliente_id', 'perfil_id', 'search')), params)
+
+
+def ligar_contrato_empleado(params):
+    return _post("ligar_contrato_empleado", _pick(params.get("data", {}), (
+        'empleado_id', 'contrato_id', 'perfiles')), params)
+
+
+def editar_perfiles_contrato_empleado(params):
+    return _post("editar_perfiles_contrato_empleado", _pick(params.get("data", {}), (
+        'empleado_id', 'contrato_id', 'perfiles')), params)
+
+
+def remover_contrato_empleado(params):
+    return _post("remover_contrato_empleado", _pick(params.get("data", {}), ('empleado_id', 'contrato_id')), params)
+
+
 DISPATCHER = {
     "list_empleados": list_empleados,
     "get_empleado": get_empleado,
@@ -119,6 +143,11 @@ DISPATCHER = {
     "levantar_veto_empleado": levantar_veto_empleado,
     "update_preferencias_empleado": update_preferencias_empleado,
     "restaurar_password_empleado": restaurar_password_empleado,
+    "list_contratos_empleado": list_contratos_empleado,
+    "list_contratos_para_ligar": list_contratos_para_ligar,
+    "ligar_contrato_empleado": ligar_contrato_empleado,
+    "editar_perfiles_contrato_empleado": editar_perfiles_contrato_empleado,
+    "remover_contrato_empleado": remover_contrato_empleado,
 }
 
 if __name__ == "__main__":
