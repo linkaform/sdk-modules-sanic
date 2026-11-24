@@ -69,7 +69,13 @@ def change_status_relacion(params):
     }, params)
 
 
+def get_arbol_relacion(params):
+    data = params.get("data", {})
+    return _post("get_arbol_relacion", {'relacion_id': data.get('relacion_id', '')}, params)
+
+
 DISPATCHER = {
+    "get_arbol_relacion": get_arbol_relacion,
     "list_relaciones": list_relaciones,
     "get_relacion": get_relacion,
     "create_relacion": create_relacion,
