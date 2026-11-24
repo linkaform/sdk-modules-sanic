@@ -74,6 +74,36 @@ def cargar_empleados(params):
     return _post("cargar_empleados", {'archivo': params.get("data", {}).get('archivo')}, params)
 
 
+def list_documentos_empleado(params):
+    return _post("list_documentos_empleado", _pick(params.get("data", {}), (
+        'empleado_id', 'estatus', 'origen', 'search', 'limit', 'offset')), params)
+
+
+def get_qr_empleado(params):
+    return _post("get_qr_empleado", {'empleado_id': params.get("data", {}).get('empleado_id', '')}, params)
+
+
+def vetar_empleado(params):
+    data = params.get("data", {})
+    return _post("vetar_empleado", {'empleado_id': data.get('empleado_id', ''), 'motivo': data.get('motivo', '')},
+                 params)
+
+
+def levantar_veto_empleado(params):
+    return _post("levantar_veto_empleado", {'empleado_id': params.get("data", {}).get('empleado_id', '')}, params)
+
+
+def update_preferencias_empleado(params):
+    data = params.get("data", {})
+    return _post("update_preferencias_empleado", {'empleado_id': data.get('empleado_id', ''),
+                                                  'preferencias': data.get('preferencias', {})}, params)
+
+
+def restaurar_password_empleado(params):
+    return _post("restaurar_password_empleado", {'empleado_id': params.get("data", {}).get('empleado_id', '')},
+                 params)
+
+
 DISPATCHER = {
     "list_empleados": list_empleados,
     "get_empleado": get_empleado,
@@ -83,6 +113,12 @@ DISPATCHER = {
     "analizar_documentos_empleado": analizar_documentos_empleado,
     "validar_carga_empleados": validar_carga_empleados,
     "cargar_empleados": cargar_empleados,
+    "list_documentos_empleado": list_documentos_empleado,
+    "get_qr_empleado": get_qr_empleado,
+    "vetar_empleado": vetar_empleado,
+    "levantar_veto_empleado": levantar_veto_empleado,
+    "update_preferencias_empleado": update_preferencias_empleado,
+    "restaurar_password_empleado": restaurar_password_empleado,
 }
 
 if __name__ == "__main__":
