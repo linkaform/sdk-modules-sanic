@@ -1,7 +1,7 @@
 #!/usr/local/bin/python
 # coding: utf-8
 # Puente entre el script-runner de Django y las rutas /accesos/relaciones/* de
-# Contratistas (R-01 y MX-05-B). El front de clave10 lo llama con
+# Contratistas (R-01, MX-05-B y MX-03-B). El front de clave10 lo llama con
 # script_name="relaciones_sdk.py" + option="<nombre de la ruta>".
 import sys, simplejson, lkf_addons
 from middleware.auth import dispatch
@@ -85,7 +85,21 @@ def save_asignacion_requerimientos(params):
     return _post("save_asignacion_requerimientos", {'asignaciones': data.get('asignaciones', [])}, params)
 
 
+def get_incumplimientos(params):
+    data = params.get("data", {})
+    return _post("get_incumplimientos", {k: data.get(k) for k in (
+        'relacion_ids', 'requerimiento_id') if data.get(k) is not None}, params)
+
+
+def notificar_incumplimientos(params):
+    data = params.get("data", {})
+    return _post("notificar_incumplimientos", {k: data.get(k) for k in (
+        'relacion_ids', 'motivo', 'requerimiento_id') if data.get(k) is not None}, params)
+
+
 DISPATCHER = {
+    "get_incumplimientos": get_incumplimientos,
+    "notificar_incumplimientos": notificar_incumplimientos,
     "get_asignacion_requerimientos": get_asignacion_requerimientos,
     "save_asignacion_requerimientos": save_asignacion_requerimientos,
     "get_arbol_relacion": get_arbol_relacion,
