@@ -1,7 +1,7 @@
 #!/usr/local/bin/python
 # coding: utf-8
 # Puente entre el script-runner de Django y las rutas /accesos/contratos/* de
-# Contratistas (ME-14). El front de clave10 lo llama con
+# Contratistas (ME-14 y ME-13). El front de clave10 lo llama con
 # script_name="contratos_sdk.py" + option="<nombre de la ruta>".
 import sys, simplejson, lkf_addons
 from middleware.auth import dispatch
@@ -77,7 +77,31 @@ def get_historial_contrato(params):
     return _post("get_historial_contrato", {'contrato_id': data.get('contrato_id', '')}, params)
 
 
+def get_mapeo_contrato(params):
+    data = params.get("data", {})
+    return _post("get_mapeo_contrato", {'contrato_id': data.get('contrato_id', '')}, params)
+
+
+def sugerir_mapeo(params):
+    data = params.get("data", {})
+    return _post("sugerir_mapeo", {'filas': data.get('filas', []), 'solo_sin_match': bool(data.get('solo_sin_match'))}, params)
+
+
+def save_mapeo_contrato(params):
+    data = params.get("data", {})
+    return _post("save_mapeo_contrato", {'contrato_id': data.get('contrato_id', ''), 'filas': data.get('filas', [])}, params)
+
+
+def crear_en_catalogo(params):
+    data = params.get("data", {})
+    return _post("crear_en_catalogo", {'requerimiento': data.get('requerimiento', {})}, params)
+
+
 DISPATCHER = {
+    "get_mapeo_contrato": get_mapeo_contrato,
+    "sugerir_mapeo": sugerir_mapeo,
+    "save_mapeo_contrato": save_mapeo_contrato,
+    "crear_en_catalogo": crear_en_catalogo,
     "list_contratos": list_contratos,
     "get_contrato": get_contrato,
     "create_contrato": create_contrato,
