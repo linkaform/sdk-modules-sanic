@@ -1,7 +1,7 @@
 #!/usr/local/bin/python
 # coding: utf-8
 # Puente entre el script-runner de Django y las rutas /accesos/cumplimiento/* de
-# Contratistas (ME-15). El front de clave10 lo llama con
+# Contratistas (ME-15 y ME-07-B). El front de clave10 lo llama con
 # script_name="cumplimiento_sdk.py" + option="<nombre de la ruta>".
 import sys, simplejson, lkf_addons
 from middleware.auth import dispatch
@@ -60,7 +60,49 @@ def recalcular_cumplimiento(params):
     }, params)
 
 
+def get_cumplimiento_documental(params):
+    data = params.get("data", {})
+    return _post("get_cumplimiento_documental", {'anio': data.get('anio')}, params)
+
+
+def get_periodo_cumplimiento(params):
+    data = params.get("data", {})
+    return _post("get_periodo_cumplimiento", {
+        'requerimiento_id': data.get('requerimiento_id', ''),
+        'periodo_clave': data.get('periodo_clave'),
+    }, params)
+
+
+def subir_acuse(params):
+    data = params.get("data", {})
+    return _post("subir_acuse", {'acuse': data.get('acuse', {})}, params)
+
+
+def generar_cumplimiento(params):
+    data = params.get("data", {})
+    return _post("generar_cumplimiento", {
+        'requerimiento_id': data.get('requerimiento_id', ''),
+        'periodo_clave': data.get('periodo_clave'),
+    }, params)
+
+
+def descargar_cumplimiento(params):
+    data = params.get("data", {})
+    return _post("descargar_cumplimiento", {'anio': data.get('anio'), 'pestanas': data.get('pestanas')}, params)
+
+
+def get_resumen_cumplimiento(params):
+    data = params.get("data", {})
+    return _post("get_resumen_cumplimiento", {'limit': data.get('limit', 50)}, params)
+
+
 DISPATCHER = {
+    "get_cumplimiento_documental": get_cumplimiento_documental,
+    "get_periodo_cumplimiento": get_periodo_cumplimiento,
+    "subir_acuse": subir_acuse,
+    "generar_cumplimiento": generar_cumplimiento,
+    "descargar_cumplimiento": descargar_cumplimiento,
+    "get_resumen_cumplimiento": get_resumen_cumplimiento,
     "list_cumplimiento": list_cumplimiento,
     "set_estado_cumplimiento": set_estado_cumplimiento,
     "recalcular_cumplimiento": recalcular_cumplimiento,

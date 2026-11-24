@@ -1,7 +1,7 @@
 #!/usr/local/bin/python
 # coding: utf-8
 # Puente entre el script-runner de Django y las rutas /accesos/documentos/* de
-# Contratistas (F0-11, ME-06-B y MX-02-B). El front de clave10 lo llama con
+# Contratistas (F0-11, ME-06-B, MX-02-B y ME-07-B). El front de clave10 lo llama con
 # script_name="documentos_sdk.py" + option="<nombre de la ruta>".
 import sys, simplejson, lkf_addons
 from middleware.auth import dispatch
@@ -83,7 +83,13 @@ def comment_documento(params):
     }, params)
 
 
+def delete_documento(params):
+    data = params.get("data", {})
+    return _post("delete_documento", {'documento_id': data.get('documento_id', '')}, params)
+
+
 DISPATCHER = {
+    "delete_documento": delete_documento,
     "analizar_documento": analizar_documento,
     "list_documentos": list_documentos,
     "get_documento": get_documento,
