@@ -11,7 +11,11 @@ def list_script_logs(params):
         'skip': data.get('offset', 0),
         'status': data.get('status'),
         'script_ids': data.get('script_ids', []),
-        'script_name': data.get('script_name', ''),
+        # `script_name` NO es un filtro: el front (runScriptSdk) lo manda siempre con
+        # el nombre del script a ejecutar (script_logs_sdk.py) para rutear en el
+        # miniback. Reenviarlo como filtro mezclaba los logs de este script con los
+        # del script elegido en `script_ids`. El filtro por nombre va en otra llave.
+        'script_name': data.get('script_name_filter', ''),
         'user_ids': data.get('user_ids', []),
         'user_name': data.get('user_name', ''),
         'date1': data.get('date1'),
