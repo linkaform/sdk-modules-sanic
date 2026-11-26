@@ -80,6 +80,8 @@ def update_user(params):
         'email': data.get('email'),
         'timezone': data.get('timezone'),
         'language': data.get('language'),
+        # Roles del catálogo `rol` (van al empleado); None = no se tocan (2611-1649).
+        'roles': data.get('roles'),
     }, method='post', **params)
 
 def reset_password(params):
